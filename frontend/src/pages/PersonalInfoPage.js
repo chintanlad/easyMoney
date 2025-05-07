@@ -93,7 +93,14 @@ const PersonalInfoPage = () => {
     }
 
     console.log("Personal info submitted:", formData)
-    navigate("/verification")
+
+    // Navigate to OTP verification page
+    navigate("/otp-verification", {
+      state: {
+        email: username,
+        isLogin: false,
+      },
+    })
   }
 
   return (

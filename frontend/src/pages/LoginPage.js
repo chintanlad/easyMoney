@@ -46,8 +46,20 @@ const LoginPage = () => {
   const handleLoginSubmit = (e) => {
     e.preventDefault()
     console.log("Login submitted:", loginData)
+
     // In a real app, you would authenticate with a backend here
-    navigate("/dashboard")
+    // After successful authentication, redirect based on role
+    if (loginData.role === "admin") {
+      navigate("/admin")
+    } else {
+      // For regular users, go to OTP verification first
+      navigate("/otp-verification", {
+        state: {
+          email: loginData.username, // Assuming username is email
+          isLogin: true,
+        },
+      })
+    }
   }
 
   const handleSignupSubmit = (e) => {
@@ -78,11 +90,11 @@ const LoginPage = () => {
             <form onSubmit={handleLoginSubmit}>
               <CardContent className="space-y-4 pt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
+                  <Label htmlFor="username">Username/Email</Label>
                   <Input
                     id="username"
                     name="username"
-                    placeholder="Enter your username"
+                    placeholder="Enter your username or email"
                     value={loginData.username}
                     onChange={handleLoginChange}
                     required
@@ -132,11 +144,12 @@ const LoginPage = () => {
             <form onSubmit={handleSignupSubmit}>
               <CardContent className="space-y-4 pt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-username">Username</Label>
+                  <Label htmlFor="signup-username">Email</Label>
                   <Input
                     id="signup-username"
                     name="username"
-                    placeholder="Choose a username"
+                    type="email"
+                    placeholder="Enter your email"
                     value={signupData.username}
                     onChange={handleSignupChange}
                     required
