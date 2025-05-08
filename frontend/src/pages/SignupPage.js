@@ -6,12 +6,15 @@ import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { Label } from "../components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card"
+import axios from 'axios';
+
 
 const SignupPage = () => {
   const navigate = useNavigate()
   const [signupData, setSignupData] = useState({
     username: "",
-    password: "",
+    email:"",
+    passwordHash: "",
     confirmPassword: "",
   })
 
@@ -23,15 +26,28 @@ const SignupPage = () => {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+  
     if (signupData.password !== signupData.confirmPassword) {
       alert("Passwords don't match!")
       return
     }
-    console.log("Signup submitted:", signupData)
-    // Move to personal information page
-    navigate("/personal-info", { state: { username: signupData.username } })
+  
+    try {
+      const response = await axios.post("http://localhost:8080/api/users", {
+        username: signupData.username,
+        email: signupData.email,
+        passwordHash: signupData.password,
+        role: "USER", 
+      })
+  
+      console.log("Signup success:", response.data)
+      navigate("/personal-info", { state: { username: signupData.username } })
+    } catch (error) {
+      console.error("Signup failed:", error)
+      alert("Signup failed. Try again.")
+    }
   }
 
   return (
@@ -50,6 +66,17 @@ const SignupPage = () => {
                 name="username"
                 placeholder="Choose a username"
                 value={signupData.username}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                placeholder="Choose a email"
+                value={signupData.email}
                 onChange={handleChange}
                 required
               />

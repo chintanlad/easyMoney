@@ -8,6 +8,7 @@ import { Label } from "../components/ui/label"
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
+import axios from 'axios';
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -23,7 +24,8 @@ const LoginPage = () => {
   // Signup form state
   const [signupData, setSignupData] = useState({
     username: "",
-    password: "",
+    email:"",
+    passwordHash: "",
     confirmPassword: "",
   })
 
@@ -62,15 +64,28 @@ const LoginPage = () => {
     }
   }
 
-  const handleSignupSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+  
     if (signupData.password !== signupData.confirmPassword) {
       alert("Passwords don't match!")
       return
     }
-    console.log("Signup submitted:", signupData)
-    // Move to personal information page
-    navigate("/personal-info", { state: { username: signupData.username } })
+  
+    try {
+      const response = await axios.post("http://localhost:8080/api/users", {
+        username: signupData.username,
+        email: signupData.email,
+        passwordHash: signupData.password,
+        role: "USER", 
+      })
+  
+      console.log("Signup success:", response.data)
+      navigate("/personal-info/${signupData.username}", { state: { username: signupData.username } })
+    } catch (error) {
+      console.error("Signup failed:", error)
+      alert("Signup failed. Try again.")
+    }
   }
 
   return (
@@ -141,16 +156,28 @@ const LoginPage = () => {
           </TabsContent>
 
           <TabsContent value="signup">
-            <form onSubmit={handleSignupSubmit}>
+            <form onSubmit={handleSubmit}>
               <CardContent className="space-y-4 pt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-username">Email</Label>
+                  <Label htmlFor="signup-username">Username</Label>
                   <Input
                     id="signup-username"
                     name="username"
+                    type="username"
+                    placeholder="Enter your username"
+                    value={signupData.username}
+                    onChange={handleSignupChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email">Email</Label>
+                  <Input
+                    id="signup-email"
+                    name="email"
                     type="email"
                     placeholder="Enter your email"
-                    value={signupData.username}
+                    value={signupData.email}
                     onChange={handleSignupChange}
                     required
                   />

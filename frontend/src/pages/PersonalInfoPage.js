@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popove
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "../lib/utils"
+import axios from "axios"
 
 const PersonalInfoPage = () => {
   const navigate = useNavigate()
@@ -65,43 +66,51 @@ const PersonalInfoPage = () => {
     })
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
     // Validate Aadhar number
     if (personalInfo.aadharNumber.length !== 12) {
-      alert("Aadhar number must be 12 digits")
-      return
+      alert("Aadhar number must be 12 digits");
+      return;
     }
-
+  
     // Validate phone number
     if (personalInfo.phoneNumber.length < 10) {
-      alert("Please enter a valid phone number")
-      return
+      alert("Please enter a valid phone number");
+      return;
     }
-
+  
     // Validate date of birth
     if (!date) {
-      alert("Please select your date of birth")
-      return
+      alert("Please select your date of birth");
+      return;
     }
-
+  
     const formData = {
       ...personalInfo,
       dateOfBirth: date,
-      username,
+      username, // pass username
+    };
+  
+    console.log("Personal info submitted:", formData);
+  
+    try {
+      // Send data to backend
+      await axios.post("http://localhost:8080/api/user-profile", formData);
+  
+      // Navigate only after successful save
+      navigate("/verification", {
+        state: {
+          email: username,
+          isLogin: false,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to save profile:", error);
+      alert("Failed to save profile. Try again.");
     }
-
-    console.log("Personal info submitted:", formData)
-
-    // Navigate to OTP verification page
-    navigate("/otp-verification", {
-      state: {
-        email: username,
-        isLogin: false,
-      },
-    })
-  }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 py-8">

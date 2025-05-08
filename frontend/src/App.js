@@ -24,7 +24,7 @@ function App() {
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/personal-info" element={<PersonalInfoPage />} />
+          <Route path="/personal-info/:username" element={<PersonalInfoPage />} />
           <Route path="/otp-verification" element={<OtpVerificationPage />} />
           <Route path="/verification" element={<VerificationPage />} />
 

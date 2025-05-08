@@ -43,8 +43,10 @@ public class UserEntity {
     @Column(nullable = false)
     private Boolean isVerified = false;
 
+    @Column(nullable = true)
     private String verificationToken;
 
+    @Column(nullable = true)
     private LocalDateTime tokenExpiry;
 
     @Column(nullable = false)

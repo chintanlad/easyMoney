@@ -19,13 +19,28 @@ public class UserProfileController {
         this.userProfileService = userProfileService;
     }
 
-    @PostMapping
-    public ResponseEntity<UserProfileEntity> create(@Valid @RequestBody UserProfileEntity profile) {
+
+    @PostMapping("/{username}")
+    public ResponseEntity<UserProfileEntity> create(
+            @PathVariable String username,
+            @Valid @RequestBody UserProfileEntity profile
+    ) {
         System.out.println("hello");
-        UserProfileEntity savedUser = userProfileService.save(profile);
-        return ResponseEntity.ok(savedUser);
-//        return ResponseEntity.ok(userProfileService.save(profile));
+        UserProfileEntity savedProfile = userProfileService.save(profile, username);
+        return ResponseEntity.ok(savedProfile);
     }
+
+
+//    @PostMapping
+//    public ResponseEntity<UserProfileEntity> create(@Valid @RequestBody UserProfileEntity profile) {
+//        System.out.println("hello");
+//        UserProfileEntity savedUser = userProfileService.save(profile);
+//        return ResponseEntity.ok(savedUser);
+////        return ResponseEntity.ok(userProfileService.save(profile));
+//    }
+
+
+
 //    @PostMapping
 //    public ResponseEntity<UserProfileEntity> create(@Valid @RequestBody UserProfileEntity profile) {
 //        if (profile.getUser() == null || profile.getUser().getUserId() == null) {

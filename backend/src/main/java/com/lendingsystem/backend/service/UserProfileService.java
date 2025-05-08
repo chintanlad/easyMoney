@@ -36,24 +36,38 @@ public class UserProfileService extends GenericService<UserProfileEntity, Long> 
 
 
     @Transactional
-    public UserProfileEntity save(UserProfileEntity profile) {
+    public UserProfileEntity save(UserProfileEntity profile, String username) {
 
-        Long userId = profile.getUser().getUserId();
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
 
-        if (userId == null) {
-            throw new RuntimeException("User ID must not be null");
-        }
-        System.out.println("hello-save from service");
+        System.out.println("User found: " + user.getUserId());
 
-        // Fetch the user entity from DB
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-        System.out.println("hiiii- after from service");
-        profile.setUser(user);  // Attach the managed entity
-        System.out.println(profile);
+        profile.setUser(user); // attach managed UserEntity
 
         return profileRepository.save(profile);
     }
+
+
+//    @Transactional
+//    public UserProfileEntity save(UserProfileEntity profile) {
+//
+//        Long userId = profile.getUser().getUserId();
+//
+//        if (userId == null) {
+//            throw new RuntimeException("User ID must not be null");
+//        }
+//        System.out.println("hello-save from service");
+//
+//        // Fetch the user entity from DB
+//        UserEntity user = userRepository.findById(userId)
+//                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+//        System.out.println("hiiii- after from service");
+//        profile.setUser(user);  // Attach the managed entity
+//        System.out.println(profile);
+//
+//        return profileRepository.save(profile);
+//    }
 
 
 

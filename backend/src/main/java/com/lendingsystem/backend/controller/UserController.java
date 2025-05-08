@@ -1,32 +1,48 @@
 package com.lendingsystem.backend.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.lendingsystem.backend.entity.UserEntity;
 import com.lendingsystem.backend.service.IUserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final IUserService userService;
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    public UserController(IUserService userService) {
+    private final IUserService userService;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public UserController(IUserService userService, BCryptPasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping
     public ResponseEntity<UserEntity> createUser(@Valid @RequestBody UserEntity user) {
+
+        System.out.println(user);
+        log.info("Received user data: {}", user);
         if (userService.isUsernameTaken(user.getUsername())) {
             return ResponseEntity.badRequest().body(null);
         }
         if (userService.isEmailTaken(user.getEmail())) {
             return ResponseEntity.badRequest().body(null);
         }
-        user.setIsVerified(false); // default
+
+        // Hash the password before saving it
+        String hashedPassword = passwordEncoder.encode(user.getPasswordHash());  // Hash the password
+        user.setPasswordHash(hashedPassword);  // Set the hashed password
+
+        user.setIsVerified(false); // Default to not verified
         UserEntity savedUser = userService.save(user);
         System.out.println("Hello");
         return ResponseEntity.ok(savedUser);
