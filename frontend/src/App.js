@@ -5,6 +5,11 @@ import PersonalInfoPage from "./pages/PersonalInfoPage"
 import VerificationPage from "./pages/VerificationPage"
 import OtpVerificationPage from "./pages/OtpVerificationPage"
 import Dashboard from "./pages/Dashboard"
+import BorrowPage from "./pages/BorrowPage"
+import LendPage from "./pages/LendPage"
+import ProfilePage from "./pages/ProfilePage"
+import TransactionPage from "./pages/TransactionPage"
+import LoanDetailsPage from "./pages/LoanDetailsPage"
 import AdminDashboard from "./pages/admin/AdminDashboard"
 import AccountApprovalPage from "./pages/admin/AccountApprovalPage"
 import LoanApprovalPage from "./pages/admin/LoanApprovalPage"
@@ -22,7 +27,14 @@ function App() {
           <Route path="/personal-info" element={<PersonalInfoPage />} />
           <Route path="/otp-verification" element={<OtpVerificationPage />} />
           <Route path="/verification" element={<VerificationPage />} />
+
+          {/* User Routes */}
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/borrow" element={<BorrowPage />} />
+          <Route path="/lend" element={<LendPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/transactions" element={<TransactionPage />} />
+          <Route path="/loan/:loanId" element={<LoanDetailsPage />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminDashboard />}>
